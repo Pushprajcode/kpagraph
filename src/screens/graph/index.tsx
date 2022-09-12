@@ -1,88 +1,96 @@
-import {Text, View, StyleSheet, Dimensions} from 'react-native';
+import {StyleSheet, Text, View,} from 'react-native';
 import React from 'react';
-import { BarChart} from 'react-native-chart-kit';
+import {PieChart} from 'react-native-gifted-charts';
 import CustomButton from '../../component/custombutton';
-import STRINGS from '../../utils/strings';
-import { useNavigation } from '@react-navigation/native';
-import { ROUT_NAMES } from '../../router/routesnames';
+import {useNavigation} from '@react-navigation/native';
+import {ROUT_NAMES} from '../../router/routesnames';
 
-
-export default function Bargraph() {
+const Bargraph = () => {
   const navigation = useNavigation<any>();
+  const renderLegend = (text: any, color: any) => {
+    return (
+      <View style={styles.bottomView}>
+        <View
+          style={{
+            height: 18,
+            width: 18,
+            marginRight: 10,
+            borderRadius: 40,
+            backgroundColor: color || 'white',
+          }}
+        />
+        <Text style={styles.bottomText}>{text || ''}</Text>
+      </View>
+    );
+  };
 
-  const  data={
-    labels: [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'july',
-    ],
-    datasets: [
-      {
-        data: [10, 20, 30, 40, 50, 60, 70],
-      },
-    ],
-  }
   return (
-    <View>
-      <Text>Bar chart</Text>
-      <BarChart
-        data={data}
-        width={Dimensions.get('window').width}
-        height={280}
-        yAxisLabel="$"
-        yAxisSuffix="k"
-        yAxisInterval={10} 
-        
-        chartConfig={{
-          backgroundColor: '#e26a00',
-          // backgroundGradientFrom: "#fb8c00",
-          backgroundGradientTo: '#ffa726',
-          // decimalPlaces: 2, // optional, defaults to 2dp
-          color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-          labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-          style: {
-            borderRadius: 16,
+    <View style={styles.mainView}>
+      <PieChart
+        strokeColor="white"
+        strokeWidth={2}
+        donut={true}
+        data={[
+          {
+            value: 67,
+            color: '#67b7dd',
+            text: '67.13%',
+            shiftTextX: -15,
+            shiftTextY: -20,
           },
-          propsForDots: {
-            r: '6',
-            strokeWidth: '2',
-            stroke: '#ffa726',
-          },
-        }}
-        bezier
-        style={{
-          marginVertical: 8,
-          borderRadius: 16,
+          {value: 20, color: '#6694dc', text: '20.13%'},
+          {value: 5, color: '#c767dc', text: '4.81%', shiftTextX: -10},
+          {value: 7, color: '#8167dc', text: '7.93%', shiftTextX: -10},
+        ]}
+        showValuesAsLabels={true}
+        showText={true}
+        textColor="black"
+        textSize={8}
+        fontWeight={'bold'}
+        centerLabelComponent={() => {
+          return (
+            <View>
+              <Text style={styles.innerCircleTxt}>{'Dec-21'}</Text>
+            </View>
+          );
         }}
       />
-      <CustomButton label={STRINGS.PIE_CHART}
-      style={styles.buttonText}
-      onPress={()=>{
-      navigation.navigate(ROUT_NAMES.PIE_GRAPH)
-        
-      }}/>
 
+      <View style={styles.bottomItem}>
+        {renderLegend('Promoters', '#67b7dd')}
+        {renderLegend('FII', '#6694dc')}
+        {renderLegend('DII', '#c767dc')}
+        {renderLegend('Others', '#8167dc')}
+      </View>
+      <CustomButton
+      label={'areachart'}
+        onPress={() => {
+          navigation.navigate(ROUT_NAMES.AREA_CHART);
+        }}
+      />
     </View>
   );
-}
-
-const chartConfig = {
-  backgroundGradientFrom: '#1E2923',
-  backgroundGradientFromOpacity: 0,
-  backgroundGradientTo: '#08130D',
-  backgroundGradientToOpacity: 0.5,
-  color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
-  strokeWidth: 2, // optional, default 3
-  barPercentage: 0.5,
-  useShadowColorFromDataset: false, // optional
 };
+
+export default Bargraph;
+
 const styles = StyleSheet.create({
-  buttonText:{
-    
-    
-  }
+  bottomView: {
+    flexDirection: 'row',
+  },
+  bottomText: {
+    color: 'black',
+    fontSize: 16,
+  },
+  mainView: {
+    marginVertical: 100,
+    alignItems: 'center',
+  },
+  innerCircleTxt: {color: 'grey', fontSize: 20},
+  bottomItem: {
+    width: '90%',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    marginTop: 20,
+  },
 });
